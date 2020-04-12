@@ -1,0 +1,16 @@
+<div class="container-fluid mt-3 h-100">
+  <br>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs bg-light">
+    <li *ngFor="let gep of this.machines" class="nav-item" (click)="this.selectedId = gep.opconsId">
+      <a [class]="'nav-link'+((this.selectedId==gep.opconsId)?' active':' btn-light')" data-toggle="tab" [href]="'#id'+gep.opconsId">{{gep.name}}</a>
+    </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content h-100">
+    <div *ngFor="let opcons of this.consoles;" [id]="'id'+opcons.id" [class]="'container-fluid tab-pane h-100'+((this.selectedId==opcons.id)?' active':'')"><br>
+      <app-console *ngFor="let opcons of this.consoles;" [class]="this.getOpconsClass(opcons.id)" [console]="opcons"></app-console>
+    </div>
+  </div>
+</div>
