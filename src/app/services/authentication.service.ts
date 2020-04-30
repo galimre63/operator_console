@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,15 +9,9 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) { }
 
-  login(username: string, password: string) {
-    return this.http.post<any>(`/users/authenticate`, { username: username, password: password })
-      .pipe(map(user => {
-        if (user && user.token) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        }
-
-        return user;
-      }));
+  login(username: string, psw: string): Observable<any> {
+    const param: LoginParam = { userName: username, password: psw };
+    return this.http.post<any>(`/users/authenticate`, param);
   }
 
   logout() {
@@ -25,3 +19,8 @@ export class AuthenticationService {
   }
 
 }
+
+interface LoginParam {
+  userName: string;
+  password: string;
+};

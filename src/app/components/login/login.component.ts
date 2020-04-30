@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: []
 })
 export class LoginComponent implements OnInit {
   submitted = false;
@@ -16,11 +15,11 @@ export class LoginComponent implements OnInit {
 
   get f() { return this.loginForm.controls; }
 
-  constructor(private formBuilder: FormBuilder/*,
-    private route: ActivatedRoute,
+  constructor(
+    private formBuilder: FormBuilder,
+    private authenticationService: AuthenticationService,
     private router: Router,
-    private authenticationService: AuthenticationService/*,
-    private alertService: AlertService*/) { }
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -32,7 +31,7 @@ export class LoginComponent implements OnInit {
     //this.authenticationService.logout();
 
     // get return url from route parameters or default to '/'
-    //this.returnUrl = this.route.snapshot.queryParams['localhost:8088'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['localhost:8088'] || '/';
   }
 
   onSubmit() {
@@ -43,15 +42,19 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    /*this.authenticationService.login(this.f.username.value, this.f.password.value)
-      .pipe(first())
+    localStorage.setItem('currentUser', 'usernametest');
+    return;
+
+    this.authenticationService.login(this.f.username.value, this.f.password.value)
       .subscribe(
         data => {
+          console.log('login:', data);
           this.router.navigate([this.returnUrl]);
         },
         error => {
+          console.error(error);
           //this.alertService.error(error);
           //this.loading = false;
-        });*/
+        });
   }
 }

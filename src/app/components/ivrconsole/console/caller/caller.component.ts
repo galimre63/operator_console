@@ -4,56 +4,42 @@ import { Caller } from 'src/app/classes/caller';
 @Component({
   selector: 'app-caller',
   templateUrl: './caller.component.html',
-  styleUrls: ['./caller.component.css']
+  styleUrls: ['./caller.component.scss']
 })
 export class CallerComponent implements OnInit {
 
   @Input() caller: Caller;
-  public backgroundColor:string = '';
-  public color:string='';
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  public getBackgroundColor():string{
-    this.setBackgroundColor();
-    return this.backgroundColor;
-  }
-
-  public getColor():string{
-    this.setBackgroundColor();
-    return this.color;
-  }
-
-  private setBackgroundColor():void{
-    if(this.caller.name.indexOf("operátor_")==0){
-      if(this.caller.kivalasztva){
-        this.backgroundColor = "rgb(130,200,130)";
-        this.color = "yellow";
-      }else{
-          this.backgroundColor = "rgb(150,220,150)";
-          this.color = "black";
+  public getClass(): string {
+    if (this.caller.name.indexOf('operátor_') === 0) {
+      if (this.caller.kivalasztva) {
+        return 'operator-selected';
+      } else {
+        return 'operator';
       }
-    }else{
-      if(!this.caller.mute){
-        if(this.caller.kivalasztva){
-              this.backgroundColor = "rgb(120,100,100)";
-              this.color = "yellow";
-        }else{
-            this.backgroundColor = "rgb(170,150,150)";
-            this.color = "black";
+    } else {
+      if (!this.caller.mute) {
+        if (this.caller.kivalasztva) {
+          return 'caller-mute-selected';
+        } else {
+          return 'caller-mute';
         }
-      }else{
-         if(this.caller.kivalasztva){
-              this.backgroundColor = "rgb(220,30,30)";
-              this.color = "yellow";
-         }else{
-              this.backgroundColor = "rgb(250,60,60)";
-              this.color = "black";
-         }
+      } else {
+        if (this.caller.kivalasztva) {
+          return 'caller-selected';
+        } else {
+          return 'caller';
+        }
       }
     }
+  }
+
+  public select(): void {
+    this.caller.kivalasztva = !this.caller.kivalasztva;
   }
 }

@@ -1,6 +1,6 @@
-<div [style.background-color]="getBackgroundColor()" [style.color]="getColor()">
-  ch:{{caller.channel}}<br/>
-  szolg:{{caller.name}}<br/>
-  time:{{caller.startTime}}<br/>
-  a_szam:{{caller.a_szam}}
+<div [class]="getClass()" (click)="select()">
+  ch:{{caller.channel}}<br />
+  szolg:{{caller.name}}<br />
+  time:{{caller.startTime}}<br />
+  a_szam:{{caller.aSzam}}
 </div>
