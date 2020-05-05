@@ -4,7 +4,7 @@ import { Caller } from './caller';
 export class Console {
     public connected = false;
     public id: number;
-    public rooms: Array<Room> = [new Room(), new Room()];
+    public rooms: Array<Room> = [new Room(0), new Room(1)];
     constructor(idx: number) {
         this.id = idx;
     }

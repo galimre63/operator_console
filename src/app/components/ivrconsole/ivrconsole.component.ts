@@ -32,6 +32,15 @@ export class IVRConsoleComponent implements OnInit {
       hivasAzon: 123456789,
       kivalasztva: false,
     }));
+    this.consoles[0].addCaller(new Caller({
+      channel: 1,
+      mute: false,
+      name: 'valaki',
+      aSzam: '06303096155',
+      hivottSzam: '0680999888',
+      hivasAzon: 123456780,
+      kivalasztva: false,
+    }));
   }
 
   ngOnInit() {

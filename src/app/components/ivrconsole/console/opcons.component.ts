@@ -4,6 +4,7 @@ import { Console } from 'src/app/classes/console';
 import { Room } from 'src/app/classes/room';
 import { ConnectionService } from 'src/app/services/connection.service';
 import { Subscription } from 'rxjs';
+import { RoomClick } from './room/room.component';
 import { Caller } from 'src/app/classes/caller';
 
 @Component({
@@ -32,7 +33,7 @@ export class OpConsComponent implements OnInit, OnDestroy {
 
   public addRoom(): void {
     if (this.console.rooms.length < 8) {
-      this.console.rooms.push(new Room());
+      this.console.rooms.push(new Room(this.console.rooms.length));
     }
   }
 
@@ -57,6 +58,25 @@ export class OpConsComponent implements OnInit, OnDestroy {
 
   public isConnection() {
     return this.connectionSub != null;
+  }
+
+  public roomClicked(event: [RoomClick, number]): void {
+    if (event[0] === RoomClick.OnRoom) {
+      const target: Room | undefined = this.console.rooms.find(room => room.id === event[1]);
+      const source: Room[] = this.console.rooms.filter(room => room.id !== event[1]);
+      if (target) {
+        const targetId = target.id;
+        source.forEach(room => {
+          room.callers.filter(caller => caller.kivalasztva).forEach(caller => {
+            this.sendMessage('' + caller.channel + ' ' + room.id + ' ' + targetId);
+          });
+        });
+      }
+    }
+  }
+
+  private move(callerId: number, from: number, to: number): void {
+
   }
 
   /*

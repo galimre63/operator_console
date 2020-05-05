@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Caller } from 'src/app/classes/caller';
 
 @Component({
@@ -9,6 +9,7 @@ import { Caller } from 'src/app/classes/caller';
 export class CallerComponent implements OnInit {
 
   @Input() caller: Caller;
+  @Output() isClicked: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
 
@@ -16,30 +17,32 @@ export class CallerComponent implements OnInit {
   }
 
   public getClass(): string {
+    const fund = 'container-fluid  border  h-100 ';
     if (this.caller.name.indexOf('operátor_') === 0) {
       if (this.caller.kivalasztva) {
-        return 'operator-selected';
+        return fund + 'operator-selected';
       } else {
-        return 'operator';
+        return fund + 'operator';
       }
     } else {
       if (!this.caller.mute) {
         if (this.caller.kivalasztva) {
-          return 'caller-mute-selected';
+          return fund + 'caller-mute-selected';
         } else {
-          return 'caller-mute';
+          return fund + 'caller-mute';
         }
       } else {
         if (this.caller.kivalasztva) {
-          return 'caller-selected';
+          return fund + 'caller-selected';
         } else {
-          return 'caller';
+          return fund + 'caller';
         }
       }
     }
   }
 
-  public select(): void {
+  public onClick(event: any): void {
+    this.isClicked.emit(true);
     this.caller.kivalasztva = !this.caller.kivalasztva;
   }
 }

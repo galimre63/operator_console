@@ -1,6 +1,10 @@
-<div [class]="getClass()" (click)="select()">
-  ch:{{caller.channel}}<br />
-  szolg:{{caller.name}}<br />
-  time:{{caller.startTime}}<br />
-  a_szam:{{caller.aSzam}}
+<div [class]="getClass()" (click)="onClick('callerclick')">
+  <div class="row">
+    <span class="col">ch: {{caller.channel}}</span>
+    <span class="col">szolg: {{caller.name}}</span>
+  </div>
+  <div class="row">
+    <span class="col">time: {{caller.startTime}}</span>
+    <span class="col">a_szam: {{caller.aSzam}}</span>
+  </div>
 </div>

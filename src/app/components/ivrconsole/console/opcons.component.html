@@ -13,7 +13,7 @@
   <div class="panel-body h-100">
     <div class="container-fluid h-100">
       <div class="row d-flex align-items-stretch  h-100">
-        <app-room class="col h-100" *ngFor="let room of this.console.rooms" [room]="room"></app-room>
+        <app-room class="col h-100" *ngFor="let room of this.console.rooms" [room]="room" (clicked)="roomClicked($event)"></app-room>
       </div>
     </div>
   </div>

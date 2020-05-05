@@ -21,6 +21,5 @@ export class Caller {
     public startMute: number;
     constructor(obj: CallerInterface) {
         Object.assign(this, obj);
-        console.log('caller:', this);
     }
 }
