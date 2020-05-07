@@ -28,10 +28,10 @@ export class LoginComponent implements OnInit {
     });
 
     // reset login status
-    //this.authenticationService.logout();
+    this.authenticationService.logout();
 
     // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['localhost:8088'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['localhost:80'] || '/';
   }
 
   onSubmit() {
@@ -42,13 +42,11 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    localStorage.setItem('currentUser', 'usernametest');
-    return;
-
     this.authenticationService.login(this.f.username.value, this.f.password.value)
       .subscribe(
         data => {
           console.log('login:', data);
+          localStorage.setItem('currentUser', 'usernametest');
           this.router.navigate([this.returnUrl]);
         },
         error => {

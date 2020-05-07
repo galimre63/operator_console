@@ -3,9 +3,8 @@ import { Time } from '@angular/common';
 import { Console } from 'src/app/classes/console';
 import { Room } from 'src/app/classes/room';
 import { ConnectionService } from 'src/app/services/connection.service';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { RoomClick } from './room/room.component';
-import { Caller } from 'src/app/classes/caller';
 
 @Component({
   selector: 'app-console',
@@ -15,10 +14,12 @@ import { Caller } from 'src/app/classes/caller';
 export class OpConsComponent implements OnInit, OnDestroy {
 
   @Input() console: Console;
+  @Input() user: string;
+  @Input() password: string;
 
   public sumTime: Time = { hours: 0, minutes: 0 };
   public currentTime: Time = { hours: 0, minutes: 0 };
-  private connectionSub: Subscription = null;
+  public messageSub: Subject<string>;
 
   constructor(public connection: ConnectionService) { }
 
@@ -26,9 +27,7 @@ export class OpConsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.connectionSub) {
-      this.connectionSub.unsubscribe();
-    }
+    this.connection.close();
   }
 
   public addRoom(): void {
@@ -44,20 +43,25 @@ export class OpConsComponent implements OnInit, OnDestroy {
   }
 
   public connect(): void {
-    if (this.connectionSub) {
-      this.connectionSub.unsubscribe();
-      this.connectionSub = null;
-    } else {
-      this.connectionSub = this.connection.connect().subscribe(
-        data => this.receivedMessage(data),
-        error => { console.log('error in socket:', error); this.connectionSub = null; },
-        () => console.log('connection is complete')
-      );
+    if (this.messageSub) {
+      this.connection.close();
+      this.messageSub = undefined;
+      return;
     }
+
+    this.connection.connect()
+      .subscribe(msgSub => {
+        this.messageSub = msgSub;
+        this.messageSub.subscribe(value => {
+          console.log('received msg:', value);
+        });
+        this.sendMessage('START OPCONS');
+        this.sendMessage('LOGIN ' + this.user + ' ' + this.password);
+      });
   }
 
   public isConnection() {
-    return this.connectionSub != null;
+    return this.messageSub;
   }
 
   public roomClicked(event: [RoomClick, number]): void {
