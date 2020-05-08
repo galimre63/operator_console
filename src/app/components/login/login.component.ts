@@ -29,9 +29,6 @@ export class LoginComponent implements OnInit {
 
     // reset login status
     this.authenticationService.logout();
-
-    // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['localhost:80'] || '/';
   }
 
   onSubmit() {
@@ -47,12 +44,10 @@ export class LoginComponent implements OnInit {
         data => {
           console.log('login:', data);
           localStorage.setItem('currentUser', 'usernametest');
-          this.router.navigate([this.returnUrl]);
+          this.router.navigate(['/']);
         },
         error => {
-          console.error(error);
-          //this.alertService.error(error);
-          //this.loading = false;
+          console.error('connect error:', error);
         });
   }
 }
