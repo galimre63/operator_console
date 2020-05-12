@@ -1,45 +1,64 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-
-import * as socketIo from 'socket.io-client';
+import { Observable, Subject } from 'rxjs';
+import * as io from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectionService {
-
+  private sid = '';
   private url = 'http://localhost:5050';
-  private socket: SocketIOClient.Socket;
-  private messageSub: Subject<string> = new Subject<string>();
+  private socket;
 
   constructor() {
   }
 
-  public connect(): Observable<Subject<string>> {
+  public connect(): Observable<any> {
     console.log('connect:', this.url);
-    this.socket = socketIo(this.url);
+    this.socket = io(this.url);
+
     this.socket.on('message', (data: any) => {
       console.log('socket message:', data);
-      this.messageSub.next(data);
     });
-    return new Observable<Subject<string>>(observer => {
-      console.log('socket event:connect');
-      this.socket.on('connect', () => observer.next(this.messageSub));
+    this.socket.on('connect-error', (err) => {
+      console.log('socket error:', err);
+    });
+    this.socket.on('connect-timeout', (err) => {
+      console.log('socket error:', err);
+    });
+
+    return new Observable<any>(observer => {
+      this.socket
+        .on('connect', () => {
+          console.log('socket connect');
+          return observer.next(this.socket);
+        });
     });
   }
 
-  public sendMessage(msg: string): void {
+  public sendMessage(msg: any): void {
     if (this.socket && this.socket.connected) {
-      this.socket.send(msg);
-      console.log('msg sent :', '"' + msg + '"');
+      msg.sid = this.sid;
+      this.socket.emit(msg.method, msg);
+      console.log('msg sent :', msg);
     } else {
       console.log('websocket not ready!');
     }
   }
 
   public close(): void {
-    this.socket.close();
+    if (this.socket) {
+      console.log('socket close');
+      this.socket.close();
+    }
     this.socket = undefined;
   }
 
+  public getSid(): string {
+    return this.sid;
+  }
+
+  public setSid(sid0: string): void {
+    this.sid = sid0;
+  }
 }

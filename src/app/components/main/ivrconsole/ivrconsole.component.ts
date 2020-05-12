@@ -23,24 +23,6 @@ export class IVRConsoleComponent implements OnInit {
   public selectedId = 0;
 
   constructor() {
-    this.consoles[0].addCaller(new Caller({
-      channel: 0,
-      mute: false,
-      name: 'operátor_0',
-      aSzam: '06303096155',
-      hivottSzam: '0680999888',
-      hivasAzon: 123456789,
-      kivalasztva: false,
-    }));
-    this.consoles[0].addCaller(new Caller({
-      channel: 1,
-      mute: false,
-      name: 'valaki',
-      aSzam: '06303096155',
-      hivottSzam: '0680999888',
-      hivasAzon: 123456780,
-      kivalasztva: false,
-    }));
   }
 
   ngOnInit() {

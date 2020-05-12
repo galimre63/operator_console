@@ -6,11 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { OpConsComponent } from './components/ivrconsole/console/opcons.component';
-import { IVRConsoleComponent } from './components/ivrconsole/ivrconsole.component';
-import { CallerComponent } from './components/ivrconsole/console/caller/caller.component';
-import { RoomComponent } from './components/ivrconsole/console/room/room.component';
+import { MainComponent } from './components/main/main.component';
 import { LoginComponent } from './components/login/login.component';
+
+import { IVRConsoleComponent } from './components/main/ivrconsole/ivrconsole.component';
+import { OpConsComponent } from './components/main/ivrconsole/console/opcons.component';
+import { RoomComponent } from './components/main/ivrconsole/console/room/room.component';
+import { CallerComponent } from './components/main/ivrconsole/console/caller/caller.component';
+
+import { UserSettingsComponent } from './components/main/user-settings/user-settings.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,9 @@ import { LoginComponent } from './components/login/login.component';
     IVRConsoleComponent,
     CallerComponent,
     RoomComponent,
-    LoginComponent
+    LoginComponent,
+    MainComponent,
+    UserSettingsComponent
   ],
   imports: [
     BrowserModule,

@@ -18,8 +18,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
-    private router: Router,
-    private route: ActivatedRoute) { }
+    private router: Router) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -41,8 +40,8 @@ export class LoginComponent implements OnInit {
 
     this.authenticationService.login(this.f.username.value, this.f.password.value)
       .subscribe(
-        data => {
-          console.log('login:', data);
+        isLogin => {
+          console.log('login:', isLogin);
           localStorage.setItem('currentUser', 'usernametest');
           this.router.navigate(['/']);
         },

@@ -19,12 +19,11 @@ export class OpConsComponent implements OnInit, OnDestroy {
 
   public sumTime: Time = { hours: 0, minutes: 0 };
   public currentTime: Time = { hours: 0, minutes: 0 };
-  public messageSub: Subject<string>;
+  private connected = false;
 
-  constructor(public connection: ConnectionService) { }
+  constructor(private connection: ConnectionService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   ngOnDestroy() {
     this.connection.close();
@@ -43,25 +42,21 @@ export class OpConsComponent implements OnInit, OnDestroy {
   }
 
   public connect(): void {
-    if (this.messageSub) {
+    if (this.connected) {
       this.connection.close();
-      this.messageSub = undefined;
+      this.connected = false;
       return;
     }
 
     this.connection.connect()
-      .subscribe(msgSub => {
-        this.messageSub = msgSub;
-        this.messageSub.subscribe(value => {
-          console.log('received msg:', value);
-        });
-        this.sendMessage('START OPCONS');
-        this.sendMessage('LOGIN ' + this.user + ' ' + this.password);
+      .subscribe(socket => {
+        this.connected = true;
+        this.sendMessage({ method: 'START_OPCONS', opconsId: this.console.id });
       });
   }
 
   public isConnection() {
-    return this.messageSub;
+    return this.connected;
   }
 
   public roomClicked(event: [RoomClick, number]): void {
@@ -72,7 +67,7 @@ export class OpConsComponent implements OnInit, OnDestroy {
         const targetId = target.id;
         source.forEach(room => {
           room.callers.filter(caller => caller.kivalasztva).forEach(caller => {
-            this.sendMessage('' + caller.channel + ' ' + room.id + ' ' + targetId);
+            this.sendMessage({ channel: caller.channel, room: room.id, target: targetId });
           });
         });
       }
@@ -83,48 +78,13 @@ export class OpConsComponent implements OnInit, OnDestroy {
 
   }
 
-  /*
-  client                  server
-  connect
-          ->  START OPCONS
-          ->  LOGIN <user> <password>
-          <-  LOGIN NACK
-  
-          <-  new <opconsId> <firtOperatorId> ->
-  add operator
-          ->  <firstOperatorId> C_ADDTOROOM 0
-  
-          <-  re <opconsId> <firstOperatorId>
-          ->  GETCONFIG
-          <-  re_addhivo <szobaszam> <recvSzobaszam> <channel> <hivott> <hivo> <mute> <hivasAzon>
-  add caller/operator
-  
-          <-  C_ADDHIVO <szobaszam> <channel> <mute> <phoneHivott> <phoneHivo> <hivasAzon>
-  add caller
-  
-          ->  kill <channel>
-          <-  C_REMOVEHIVO <szobaszam> <channel>
-  remove caller
-  
-          <-  C_SIGN <channel> <phoneHivott> <phoneHivo> <hivasAzon>
-  add varakozok
-  
-          ->  szetKapcsol <channel> <szobaszam>
-  move caller to varakozok
-  
-          ->  <channel> C_MOVE <scrRoom> <trgRoom> <mute>
-          <-  C_MOVE <channel> <honnan> <hova>
-  move caller/operator
-  */
-
   public receivedMessage(msg: any): void {
-    console.log('received:', msg);
+    console.log('console received:', msg);
     if (msg.isOpen) {
-      this.sendMessage('START OPCONS ' + this.console.id + '\n\rLOGIN user password\n\r');
     }
   }
 
-  private sendMessage(message: string): void {
+  private sendMessage(message: object): void {
     this.connection.sendMessage(message);
   }
 }
