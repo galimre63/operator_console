@@ -56,6 +56,9 @@ export class OpConsComponent implements OnInit, OnDestroy {
           console.log('socket error:', err.message);
           this.socket = undefined;
         })
+        .on('NACK', () => {
+          console.log('msg received NACK');
+        })
         .on('newOp', (params: any) => {
           console.log('msg received newOp:', params);
           const chId = params.firstOperatorId + (this.consoleModel.id % 4);
