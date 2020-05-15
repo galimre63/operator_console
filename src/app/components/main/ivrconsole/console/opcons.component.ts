@@ -57,7 +57,7 @@ export class OpConsComponent implements OnInit, OnDestroy {
           this.socket = undefined;
         })
         .on('newOp', (params: any) => {
-          console.log('msg received:', params);
+          console.log('msg received newOp:', params);
           const chId = params.firstOperatorId + (this.consoleModel.id % 4);
           if (this.consoleModel.addCaller(new Caller({
             channel: chId,
@@ -70,6 +70,16 @@ export class OpConsComponent implements OnInit, OnDestroy {
           }))) {
             this.connection.sendMessage(this.socket, { channel: chId, method: 'C_ADDTOROOM', room: this.sendRoomId(0) });
           }
+        })
+        .on('MOVE', (params: any) => {
+          console.log('msg received MOVE:', params);
+          // { channel: channel, from: from, to: to }
+          const room: Room = this.consoleModel.rooms[params.from];
+          const caller: Caller = room.callers.find((callerE: Caller) => callerE.channel === params.channel);
+          const id: number = room.callers.indexOf(caller);
+          this.consoleModel.rooms[params.from].callers.splice(id, 1);
+          caller.kivalasztva = false;
+          this.consoleModel.rooms[params.to].callers.push(caller);
         });
       this.connection.sendMessage(this.socket, { method: 'START_OPCONS', opconsId: this.consoleModel.id });
     });
