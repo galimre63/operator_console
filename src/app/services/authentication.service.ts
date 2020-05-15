@@ -14,25 +14,31 @@ export class AuthenticationService {
 
   login(username: string, psw: string): Subject<boolean> {
     const ret: Subject<boolean> = new Subject<boolean>();
-    const param = { method: 'LOGIN', userName: username, password: psw };
     this.connection.connect()
-      .subscribe(socket => {
+      .then(socket => {
         socket.on('loginOk', (resp) => {
-          console.log('socket loginOk:', resp);
+          console.log('socket login ok:', resp);
           if (resp.loginOk) {
             this.connection.setSid(resp.sid);
             ret.next(true);
           }
-          this.connection.close();
         });
-        this.connection.sendMessage(param);
+        socket.on('connect_error', (err: Error) => {
+          console.log('socket error:', err.message);
+          this.connection.close();
+          ret.next(false);
+        });
+        this.connection.sendMessage({ method: 'LOGIN', userName: username, password: psw });
+      })
+      .catch(err => {
+        console.log('socket login err:', err);
+        ret.next(false);
       });
     return ret;
   }
 
   logout() {
     this.connection.close();
-    localStorage.removeItem('currentUser');
     this.router.navigate(['/']);
   }
 

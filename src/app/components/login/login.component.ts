@@ -41,9 +41,13 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.f.username.value, this.f.password.value)
       .subscribe(
         isLogin => {
-          console.log('login:', isLogin);
-          localStorage.setItem('currentUser', 'usernametest');
-          this.router.navigate(['/']);
+          if (isLogin) {
+            console.log('login:', isLogin);
+            this.router.navigate(['/']);
+          } else {
+            console.log('login:', isLogin);
+            this.router.navigate(['/login']);
+          }
         },
         error => {
           console.error('connect error:', error);

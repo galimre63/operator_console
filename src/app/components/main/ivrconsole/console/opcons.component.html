@@ -2,8 +2,8 @@
   <div class="panel-header">
     <div class="container-fluid">
       <div class="row">
-        <div class="col"><button class="button" (click)="this.connect()">{{((this.isConnection())?'Kapcsolat bontása':'Kapcsolódás')}}</button></div>
-        <div class="col">Id: {{this.console.id}}</div>
+        <div class="col"><button class="button" (click)="this.connect()">{{((this.consoleJoin)?'Kapcsolat bontása':'Kapcsolódás')}}</button></div>
+        <div class="col">Id: {{consoleModel.id}}</div>
         <div class="col">Idő összesen: {{this.sumTime.hours+':'+this.sumTime.minutes}}</div>
         <div class="col">Utolsó hívás óta eltelt idő: {{this.currentTime.hours+':'+this.currentTime.minutes}}</div>
         <div class="col text-right">Szobák: <button (click)="this.addRoom()">+</button> <button (click)="this.removeRoom()">-</button></div>
@@ -12,8 +12,8 @@
   </div>
   <div class="panel-body h-100">
     <div class="container-fluid h-100">
-      <div class="row d-flex align-items-stretch  h-100">
-        <app-room class="col h-100" *ngFor="let room of this.console.rooms" [room]="room" (clicked)="roomClicked($event)"></app-room>
+      <div *ngIf="consoleJoin" class="row d-flex align-items-stretch  h-100">
+        <app-room class="col h-100" *ngFor="let room of consoleModel.rooms" [room]="room" (clicked)="roomClicked($event)"></app-room>
       </div>
     </div>
   </div>

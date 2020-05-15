@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Console } from 'src/app/classes/console';
-import { Caller } from 'src/app/classes/caller';
+import { Console } from 'src/app/models/console';
 
 export class Machine {
   public opconsId: number;

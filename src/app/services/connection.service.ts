@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
 @Injectable({
@@ -13,26 +12,24 @@ export class ConnectionService {
   constructor() {
   }
 
-  public connect(): Observable<any> {
+  public connect(): Promise<any> {
     console.log('connect:', this.url);
     this.socket = io(this.url);
 
     this.socket.on('message', (data: any) => {
       console.log('socket message:', data);
     });
-    this.socket.on('connect-error', (err) => {
-      console.log('socket error:', err);
-    });
-    this.socket.on('connect-timeout', (err) => {
-      console.log('socket error:', err);
-    });
 
-    return new Observable<any>(observer => {
-      this.socket
-        .on('connect', () => {
-          console.log('socket connect');
-          return observer.next(this.socket);
-        });
+    return new Promise<any>((resolve, reject) => {
+      this.socket.on('connect', () => {
+        console.log('socket connect');
+        resolve(this.socket);
+      });
+      this.socket.on('connect_error', (err: Error) => {
+        console.log('socket error:', err.message);
+        this.close();
+        reject(err);
+      });
     });
   }
 
@@ -50,6 +47,7 @@ export class ConnectionService {
     if (this.socket) {
       console.log('socket close');
       this.socket.close();
+      this.sid = '';
     }
     this.socket = undefined;
   }
@@ -61,4 +59,13 @@ export class ConnectionService {
   public setSid(sid0: string): void {
     this.sid = sid0;
   }
+
+  public connected(): boolean {
+    return (this.socket && this.socket.connected);
+  }
+
+  public getSocket(): any {
+    return this.socket;
+  }
+
 }

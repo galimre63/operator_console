@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Caller } from 'src/app/classes/caller';
+import { Caller } from 'src/app/models/caller';
 
 @Component({
   selector: 'app-caller',
@@ -41,7 +41,7 @@ export class CallerComponent implements OnInit {
     }
   }
 
-  public onClick(event: any): void {
+  public onClick(): void {
     this.isClicked.emit(true);
     this.caller.kivalasztva = !this.caller.kivalasztva;
   }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Room } from 'src/app/classes/room';
+import { Room } from 'src/app/models/room';
 
 export enum RoomClick {
   OnRoom,
