@@ -3,8 +3,8 @@ import { Time } from '@angular/common';
 import { Console } from 'src/app/models/console';
 import { Room } from 'src/app/models/room';
 import { RoomClick } from './room/room.component';
-import { ConsoleService } from 'src/app/services/console.service';
 import { Caller } from 'src/app/models/caller';
+import { ConnectionService } from 'src/app/services/connection.service';
 
 @Component({
   selector: 'app-opcons',
@@ -21,9 +21,9 @@ export class OpConsComponent implements OnInit, OnDestroy {
 
   public sumTime: Time = { hours: 0, minutes: 0 };
   public currentTime: Time = { hours: 0, minutes: 0 };
-  public consoleJoin = false;
+  public socket;
 
-  constructor(private connection: ConsoleService) { }
+  constructor(private connection: ConnectionService) { }
 
   ngOnInit() { }
 
@@ -42,35 +42,37 @@ export class OpConsComponent implements OnInit, OnDestroy {
   }
 
   public connect(): void {
-    if (!this.connection.connected() || (this.connection.connected() && this.consoleJoin)) {
-      this.connection.sendMessage({ method: 'DISCONNECT', opconsId: this.consoleModel.id });
+    if (this.socket && this.socket.connected) {
+      this.connection.sendMessage(this.socket, { method: 'DISCONNECT', opconsId: this.consoleModel.id });
       this.consoleModel.rooms.forEach(room => room.callers = []);
-      this.consoleJoin = false;
+      this.socket = undefined;
       return;
     }
 
-    this.connection.connect()
-      .on('connect_error', (err: Error) => {
-        console.log('socket error:', err.message);
-        this.consoleJoin = false;
-      })
-      .on('newOp', (params: any) => {
-        console.log('msg received:', params);
-        this.consoleJoin = true;
-        const chId = params.firstOperatorId + (this.consoleModel.id % 4);
-        if (this.consoleModel.addCaller(new Caller({
-          channel: chId,
-          mute: false,
-          name: 'operátor_' + params.channel,
-          aSzam: '',
-          hivottSzam: '',
-          hivasAzon: 0,
-          kivalasztva: false
-        }))) {
-          this.connection.sendMessage({ channel: chId, method: 'C_ADDTOROOM', room: this.sendRoomId(0) });
-        }
-      });
-    this.connection.sendMessage({ method: 'START_OPCONS', opconsId: this.consoleModel.id });
+    this.connection.connect().then(socket0 => {
+      this.socket = socket0;
+      this.socket
+        .on('connect_error', (err: Error) => {
+          console.log('socket error:', err.message);
+          this.socket = undefined;
+        })
+        .on('newOp', (params: any) => {
+          console.log('msg received:', params);
+          const chId = params.firstOperatorId + (this.consoleModel.id % 4);
+          if (this.consoleModel.addCaller(new Caller({
+            channel: chId,
+            mute: false,
+            name: 'operátor_' + params.channel,
+            aSzam: '',
+            hivottSzam: '',
+            hivasAzon: 0,
+            kivalasztva: false
+          }))) {
+            this.connection.sendMessage(this.socket, { channel: chId, method: 'C_ADDTOROOM', room: this.sendRoomId(0) });
+          }
+        });
+      this.connection.sendMessage(this.socket, { method: 'START_OPCONS', opconsId: this.consoleModel.id });
+    });
   }
 
   private sendRoomId(roomId: number): number {
@@ -85,7 +87,7 @@ export class OpConsComponent implements OnInit, OnDestroy {
         const targetId = target.id;
         source.forEach(room => {
           room.callers.filter(caller => caller.kivalasztva).forEach(caller => {
-            this.connection.sendMessage({ method: 'MOVE', channel: caller.channel, from: room.id, to: targetId });
+            this.connection.sendMessage(this.socket, { method: 'MOVE', channel: caller.channel, from: room.id, to: targetId });
           });
         });
       }

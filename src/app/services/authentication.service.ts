@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 })
 export class AuthenticationService {
 
+  private join = false;
+
   constructor(
     private connection: ConnectionService,
     private router: Router) { }
@@ -19,16 +21,17 @@ export class AuthenticationService {
         socket.on('loginOk', (resp) => {
           console.log('socket login ok:', resp);
           if (resp.loginOk) {
-            this.connection.setSid(resp.sid);
             ret.next(true);
+            this.join = true;
           }
+          socket.close();
         });
         socket.on('connect_error', (err: Error) => {
           console.log('socket error:', err.message);
-          this.connection.close();
           ret.next(false);
+          socket.close();
         });
-        this.connection.sendMessage({ method: 'LOGIN', userName: username, password: psw });
+        this.connection.sendMessage(socket, { method: 'LOGIN', userName: username, password: psw });
       })
       .catch(err => {
         console.log('socket login err:', err);
@@ -37,13 +40,11 @@ export class AuthenticationService {
     return ret;
   }
 
-  logout() {
-    this.connection.close();
+  public logout() {
     this.router.navigate(['/']);
   }
 
-  public hasSession(): boolean {
-    return this.connection.getSid().length > 0;
+  public loginOk(): boolean {
+    return this.join;
   }
-
 }
