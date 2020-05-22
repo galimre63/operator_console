@@ -3,7 +3,7 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs bg-light">
     <li *ngFor="let tabs of ['Beállítások','Konzolok'];let id = index;" class="nav-item" (click)="this.selectedId = id">
-      <a [class]="'nav-link'+((this.selectedId==id)?' active':' btn-light')" data-toggle="tab" [href]="'#id'+id">{{tabs}}</a>
+      <span [class]="'nav-link'+((this.selectedId==id)?' active':' btn-light')" data-toggle="tab">{{tabs}}</span>
     </li>
   </ul>
 
