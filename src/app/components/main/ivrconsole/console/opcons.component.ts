@@ -11,7 +11,7 @@ import { ConnectionService } from 'src/app/services/connection.service';
   templateUrl: './opcons.component.html',
   styleUrls: []
 })
-export class OpConsComponent implements OnInit, OnDestroy {
+export class OpConsComponent implements OnInit {
 
   readonly MAXROOM = 8;
 
@@ -26,8 +26,6 @@ export class OpConsComponent implements OnInit, OnDestroy {
   constructor(private connection: ConnectionService) { }
 
   ngOnInit() { }
-
-  ngOnDestroy() { }
 
   public addRoom(): void {
     if (this.consoleModel.rooms.length < this.MAXROOM) {

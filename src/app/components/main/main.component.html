@@ -1,15 +1,20 @@
-<div class="container-fluid mt-3 h-100">
-  <br />
+<div class="h-100">
+  <div class="row">
+    <h4 class="col">Operátor konzol</h4>
+    <div class="col">
+      <div class="btn btn-primary float-right" (click)="logout()">Kijelentkezés</div>
+    </div>
+  </div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs bg-light">
     <li *ngFor="let tabs of ['Beállítások','Konzolok'];let id = index;" class="nav-item" (click)="this.selectedId = id">
-      <span [class]="'nav-link'+((this.selectedId==id)?' active':' btn-light')" data-toggle="tab">{{tabs}}</span>
+      <span [class]="'nav-link btn'+((this.selectedId==id)?' active':' btn-light')" data-toggle="tab">{{tabs}}</span>
     </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content h-100">
-    <div *ngFor="let tabs of ['main','operator'];let id = index;" [id]="'id'+id" [class]="'container-fluid tab-pane h-100'+((this.selectedId==id)?' active':'')">
+    <div *ngFor="let tabs of ['main','operator'];let id = index;" [id]="'id'+id" [class]="'tab-pane h-100'+((this.selectedId==id)?' active':'')">
       <app-ivrconsole *ngIf="tabs==='operator'"></app-ivrconsole>
       <app-user-settings *ngIf="tabs==='main'"></app-user-settings>
     </div>

@@ -1,4 +1,4 @@
-<div class="container-fluid mt-3 h-100">
+<div class="h-100 border">
   <br>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs bg-light">
@@ -9,7 +9,7 @@
 
   <!-- Tab panes -->
   <div class="tab-content h-100">
-    <div *ngFor="let opcons of this.consoles;" [id]="'cons'+opcons.id" [class]="'container-fluid tab-pane h-100'+((this.selectedId==opcons.id)?' active':'')"><br>
+    <div *ngFor="let opcons of this.consoles;" [id]="'cons'+opcons.id" [class]="'tab-pane h-100 border'+((this.selectedId==opcons.id)?' active':'')"><br>
       <app-opcons *ngFor="let opcons of this.consoles;" [class]="this.getOpconsClass(opcons.id)" [consoleModel]="opcons"></app-opcons>
     </div>
   </div>

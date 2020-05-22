@@ -41,7 +41,15 @@ export class AuthenticationService {
   }
 
   public logout() {
-    this.router.navigate(['/']);
+    this.join = false;
+    this.connection.connect()
+      .then(socket => {
+        this.connection.sendMessage(socket, { method: 'LOGOUT' });
+      })
+      .catch(err => {
+        console.log('socket logout err:', err);
+      });
+    this.router.navigate(['/login']);
   }
 
   public loginOk(): boolean {

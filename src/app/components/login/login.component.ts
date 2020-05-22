@@ -25,9 +25,6 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-
-    // reset login status
-    this.authenticationService.logout();
   }
 
   onSubmit() {
